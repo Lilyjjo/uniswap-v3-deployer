@@ -1,0 +1,14 @@
+# These addresses need funds on the target chain
+ADMIN=
+ADMIN_PK=
+
+LIQUIDITY_PROVIDER=
+LIQUIDITY_PROVIDER_PK=
+
+SWAPPER=
+SWAPPER_PK=
+
+# Grab these addresses from running the deploy script
+SWAP_ROUTER_DEPLOYED= 
+TOKEN_0_DEPLOYED=
+TOKEN_1_DEPLOYED=

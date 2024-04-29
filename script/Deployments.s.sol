@@ -35,16 +35,12 @@ contract Deployments is UniswapDeployer {
 
     /**
      * @notice Deploys and sets up new L1 contracts for testing
-     * @dev creates and submits ~42 transactions, will take ~12 minutes assuming 12 second blocktime
+     * @dev creates and submits ~12 transactions, will take ~10 minutes to deploy depending on the target blockchain's blocktime
      * @dev command: forge script script/Deployments.s.sol:Deployments  --broadcast --legacy -vv --verify --sig "deployUniswapV3(bool)" true --fork-url https://ethereum-holesky-rpc.publicnode.com
      */
     function deployUniswapV3(bool initPoolState) public {
         UniswapDeployer.DeploymentInfo
-            memory deploymentInfo = _deployUniswapConracts(
-                3000,
-                admin,
-                adminPk
-            );
+            memory deploymentInfo = _deployUniswapConracts(admin, adminPk);
 
         if (initPoolState) {
             // Add state to uniswap contracts
@@ -64,7 +60,15 @@ contract Deployments is UniswapDeployer {
     /**
      * @notice Makes a swap on the deployed uniswap v3 pool
      * @dev Need to set some addresses in the .env for this to work
-     * @dev command: forge script script/Deployments.s.sol:Deployments  --broadcast --legacy -vv --verify --sig "freshL1Contracts(bool,bool)" true
+     * @dev command: forge script script/Deployments.s.sol:Deployments  --broadcast --legacy -vv --sig "performSwap()" --fork-url https://ethereum-holesky-rpc.publicnode.com
      */
-    function performSwap() public {}
+    function performSwap() public {
+        swapper = vm.envAddress("SWAPPER");
+        swapperPk = uint256(vm.envBytes32("SWAPPER_PK"));
+        address router = vm.envAddress("SWAP_ROUTER_DEPLOYED");
+        address token_0 = vm.envAddress("TOKEN_0_DEPLOYED");
+        address token_1 = vm.envAddress("TOKEN_1_DEPLOYED");
+
+        _swap(swapper, swapperPk, router, token_0, token_1, token_0, 10, 0);
+    }
 }

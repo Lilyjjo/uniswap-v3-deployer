@@ -26,11 +26,11 @@ contract UniswapDeployer is Script {
         address swapRouter;
         address admin;
         uint256 adminPk;
-        uint16 poolFee;
     }
 
+    uint24 constant POOL_FEE = 3000;
+
     function _deployUniswapConracts(
-        uint16 poolFee,
         address admin,
         uint256 adminPk
     ) internal returns (DeploymentInfo memory newDInfo) {
@@ -80,7 +80,7 @@ contract UniswapDeployer is Script {
             uniswapV3Factory.createPool(
                 address(token0),
                 address(token1),
-                poolFee
+                POOL_FEE
             )
         );
 
@@ -130,7 +130,6 @@ contract UniswapDeployer is Script {
         );
 
         newDInfo.swapRouter = address(swapRouter);
-        newDInfo.poolFee = poolFee;
         console2.log("swapRouter: ");
         console2.log(address(swapRouter));
 
@@ -156,39 +155,34 @@ contract UniswapDeployer is Script {
         );
     }
 
-    function _createSwapTranscationData(
+    function _swap(
         address swapper,
+        uint256 swapperPk,
+        address router,
+        address token0,
+        address token1,
         address tokenIn,
         uint256 amountIn,
-        uint256 amountOut,
-        DeploymentInfo memory dInfo
-    ) internal view returns (bytes memory) {
-        // create txn to be signed
-        bytes memory targetCall;
-        {
-            // scoping for stack too deep errors
-            ERC20Mintable tokenOut = ERC20Mintable(
-                tokenIn == dInfo.token0 ? dInfo.token1 : dInfo.token0
-            );
+        uint256 amountOut
+    ) internal {
+        // scoping for stack too deep errors
+        address tokenOut = tokenIn == token0 ? token1 : token0;
 
-            ISwapRouter.ExactInputSingleParams memory swapParams;
-            swapParams = ISwapRouter.ExactInputSingleParams({
-                tokenIn: address(tokenIn),
-                tokenOut: address(tokenOut),
-                fee: dInfo.poolFee,
-                recipient: swapper,
-                deadline: block.timestamp + 10000,
-                amountIn: amountIn,
-                amountOutMinimum: amountOut,
-                sqrtPriceLimitX96: 0
-            });
-            targetCall = abi.encodeWithSelector(
-                ISwapRouter.exactInputSingle.selector,
-                swapParams
-            );
-        }
+        ISwapRouter.ExactInputSingleParams memory swapParams;
+        swapParams = ISwapRouter.ExactInputSingleParams({
+            tokenIn: tokenIn,
+            tokenOut: tokenOut,
+            fee: POOL_FEE,
+            recipient: swapper,
+            deadline: block.timestamp + 10000,
+            amountIn: amountIn,
+            amountOutMinimum: amountOut,
+            sqrtPriceLimitX96: 0
+        });
 
-        return targetCall;
+        vm.startBroadcast(swapperPk);
+        ISwapRouter(router).exactInputSingle(swapParams);
+        vm.stopBroadcast();
     }
 
     function _fundSwapperApproveSwapRouter(
@@ -281,7 +275,7 @@ contract UniswapDeployer is Script {
             memory mintParams = INonfungiblePositionManager.MintParams({
                 token0: address(dInfo.token0),
                 token1: address(dInfo.token1),
-                fee: dInfo.poolFee,
+                fee: POOL_FEE,
                 tickLower: tickLower,
                 tickUpper: tickUpper,
                 amount0Desired: token0Amount,
