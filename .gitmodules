@@ -10,3 +10,7 @@
 	path = lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
 	branch = release-v4.0
+[submodule "lib/v3-periphery-fixed"]
+	path = lib/v3-periphery-fixed
+	url = https://github.com/Lilyjjo/univ3-0.8-periphery-codehash-fixed
+	branch = 0.8
