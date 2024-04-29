@@ -11,10 +11,10 @@ It additionally initializes the pool's tick square root spacing and initial obse
 
 ## How to Run
 1. Clone the repo and initialize the submodules:
-        ```
-        git clone https://github.com/Lilyjjo/uniswap-v3-deployer
-        git submodule update --recursive
-        ```
+    ```
+    git clone https://github.com/Lilyjjo/uniswap-v3-deployer
+    git submodule update --recursive
+    ```
 
 2. Clone `.sample_env` to `.env` and fill out initial EOA private/public key pairs.
 3. Deploy the setup:
