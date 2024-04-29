@@ -5,8 +5,8 @@ import {Script, console2} from "../lib/forge-std/src/Script.sol";
 
 import {IUniswapV3Factory} from "../lib/v3-core/contracts/interfaces/IUniswapV3Factory.sol";
 import {IUniswapV3Pool} from "../lib/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
-import {INonfungiblePositionManager} from "../lib/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol";
-import {ISwapRouter} from "../lib/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+import {INonfungiblePositionManager} from "../lib/v3-periphery-fixed/contracts/interfaces/INonfungiblePositionManager.sol";
+import {ISwapRouter} from "../lib/v3-periphery-fixed/contracts/interfaces/ISwapRouter.sol";
 import {ERC20Mintable} from "../src/ERC20Mintable.sol";
 import {TickMath} from "../lib/v3-core/contracts/libraries/TickMath.sol";
 
