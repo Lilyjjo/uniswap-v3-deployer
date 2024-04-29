@@ -13,6 +13,8 @@ It additionally initializes the pool's tick square root spacing and initial obse
 1. Clone the repo and initialize the submodules:
     ```
     git clone https://github.com/Lilyjjo/uniswap-v3-deployer
+    cd uniswap-v3-deployer
+    git submodule init
     git submodule update --recursive
     ```
 
